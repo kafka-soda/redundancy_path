@@ -1,5 +1,5 @@
 import networkx as nx
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import sys
 
 #返回目标节点的前置节点，list
@@ -53,9 +53,14 @@ def seek_redundancy_path(G, source, target, shortest_path, path_stacklist, searc
         for eachnode in target_prenodes:
             if eachnode not in path_stacklist:
                 if eachnode not in shortest_path:  # 找新的可达前置节点 
-                    if nx.has_path(G, source, eachnode):
-                        has_redundancy_node = True  # 有冗余节点并且可达，置为true
+                    if nx.has_path(G, source, eachnode): 
                         pre_short_path = nx.dijkstra_path(G, source, eachnode, weight='weight')
+                        #如果此节点的路径会经过终点，说明这个节点没意义
+                        if eachnode in pre_short_path[:-1]:
+                            continue    
+                        
+                        #有冗余节点并且可达，置为true
+                        has_redundancy_node = True  
                         #计算此节点的权重和
                         path_length = nx.dijkstra_path_length(G, source, eachnode)
                         #判断是否路径完全不重叠
@@ -162,24 +167,13 @@ if __name__ == "__main__":
     ("A","D"),("C","E"),("E","C"),("B","F"),("F","B"),("E","F"),("F","E")])
 
     
-    nx.draw(G, with_labels=True)
-    plt.show()
+    #nx.draw(G, with_labels=True)
+    #plt.show()
     
     ret = get_redundancy_path(G, "A", "E", weight='weight')
 
     if ret == None:
-        print("have no redundancy_path")
+        print("Have no redundancy_path")
     else:
-        print("the redundancy_path is", ret)
-
-
-
-                        
-
-
-            
-
-
-
-
+        print("The redundancy_path is", ret)
 
